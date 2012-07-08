@@ -22,61 +22,50 @@
 #include "mimetex.h"
 #include <stdio.h>
 
-#define MAXGIFSZ 131072
-
-GLOBAL(raster,*bitmap_raster,NULL);
-
 static VALUE rb_mMimeTex;
 static VALUE rb_cMimeTexRender;
-
-int	MIMETEX_GetPixel ( int x, int y ) {
-	int	ipixel = y*bitmap_raster->width + x; /* pixel index for x,y-coords*/
-	return (int)getlongbit(bitmap_raster->pixmap,ipixel); /*pixel = 0 or 1*/;
-}
 
 static VALUE MIMETEX_init(VALUE self, int fontSize) {
 	rb_iv_set(self, "@fontSize", fontSize);
 	return self;
 }
 
-static VALUE MIMETEX_render(VALUE self, VALUE rb_sLatexCode) {
+static VALUE MIMETEX_bitmap(VALUE self, VALUE rb_sLatexCode) {
 	Check_Type (rb_sLatexCode, T_STRING);
-
-	VALUE rb_sLatexCodeCopy;
-
-	// Because plain duplication shares internal memory region.  You
-	// have to call rb_str_modify() before modifying a string.
-  rb_sLatexCodeCopy = rb_str_dup(rb_sLatexCode);
-  rb_str_modify(rb_sLatexCodeCopy);
 
 	int fontSize = FIX2INT(rb_iv_get(self, "@fontSize"));
 
 	if(fontSize > 4 || fontSize < 1) fontSize = 2;
 
-	subraster *sp = rasterize(StringValuePtr(rb_sLatexCodeCopy), fontSize);
-	bitmap_raster = sp->image;
+	subraster *sp = rasterize(StringValuePtr(rb_sLatexCode), fontSize);
 
-  type_raster(bitmap_raster,stdout);  /* display ascii image of raster */
+  int width = sp->image->width;
+	int height = sp->image->height;
 
-	char *gif_buffer = ALLOCA_N(char, MAXGIFSZ);
+	VALUE hash = rb_hash_new();
+	VALUE bitsArray = rb_ary_new();
 
-	int gifSize = 0;
-	int status = GIF_Create(gif_buffer, bitmap_raster->width, bitmap_raster->height, 2, 8);
-	GIF_SetColor(1,0,0,0); /* foreground black if all 0 */
+	int y;
+	int x;
+	for (x = 0; x < height; x++) {
+		VALUE row = rb_ary_new();
+		for (y = 0; y < width; y++) {
+			int bitValue = (int)getpixel(sp->image, x, y);
+		  rb_ary_push(row, INT2FIX(bitValue));
+		}
+		rb_ary_push(bitsArray, row);
+	}
 
-	if(status != 0) rb_raise(INT2NUM(status), "Could not create GIF image");
-	GIF_SetTransparent(0);
-	GIF_CompressImage(0, 0, -1, -1, MIMETEX_GetPixel); /* emit gif */
-	gifSize = GIF_Close();
+	rb_hash_aset (hash, rb_tainted_str_new2 ("width"),  INT2FIX(width));
+	rb_hash_aset (hash, rb_tainted_str_new2 ("height"), INT2FIX(height));
+	rb_hash_aset (hash, rb_tainted_str_new2 ("bitmap"), bitsArray);
 
-	if(sp != NULL) delete_subraster(sp);	/* and free expression */
-
-	return rb_str_new(gif_buffer, gifSize);
+  return hash;
 }
 
 void Init_mimetexrb() {
 	rb_mMimeTex = rb_define_module("MimeTex");
 	rb_cMimeTexRender = rb_define_class_under(rb_mMimeTex, "Render", rb_cObject);
 	rb_define_method(rb_cMimeTexRender, "initialize", MIMETEX_init, 1);
-	rb_define_method(rb_cMimeTexRender, "render", MIMETEX_render, 1);
+	rb_define_method(rb_cMimeTexRender, "render_bitmap", MIMETEX_bitmap, 1);
 }

@@ -173,7 +173,7 @@ static int  (*GetPixel)(int x, int y);
 static int Create(char *buffer) {
 	OutBuffer = NULL; /* (added by j.forkosh) */
 	isCloseOutFile = 0; /* " */
-	
+
 	char *filename = NULL;
 	if (filename == NULL) {
 		// OutFile = stdout; /* " */

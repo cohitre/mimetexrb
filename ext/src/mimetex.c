@@ -3039,7 +3039,7 @@ if ( bitmaprp != NULL )			/* if we have image for display */
 	  ichar = min2(15,pixval/16);	/* index for ' ', '1'...'e', '*' */
 	  scanline[ipix] = display_chars[ichar]; } /*set ' ' for 0-15, etc*/
     /* --- display completed scan line --- */
-    fprintf(fp,"%.*s\n",scan_width,scanline);	
+    fprintf(fp,"%.*s\n",scan_width,scanline);
     } /* --- end-of-for(irow) --- */
   } /* --- end-of-while(hicol<rp->width) --- */
 /* -------------------------------------------------------------------------
@@ -3136,7 +3136,7 @@ while ( (locol=hicol+1) < width )	/*start where prev segment left off*/
 	  sprintf(scanbyte,"%*x ",max2(1,byte_width-1),byteval); /*hex-format*/
 	memcpy(scanline+ibyte*byte_width,scanbyte,byte_width); } /*in line*/
     /* --- display completed scan line --- */
-    fprintf(fp,"%.*s\n",scan_width,scanline);	
+    fprintf(fp,"%.*s\n",scan_width,scanline);
     } /* --- end-of-for(irow) --- */
   } /* --- end-of-while(hicol<width) --- */
 /* -------------------------------------------------------------------------
@@ -8403,7 +8403,7 @@ if ( istext )				/* text (respect blanks) */
 now convert \font{abc} --> {\font~abc}, or convert ABC to \calA\calB\calC
 -------------------------------------------------------------------------- */
 if ( 1 || class<0 )			/* not character-by-character */
- { 
+ {
  /* ---
  if \font not immediately followed by { then it has no arg, so just set flag
  ------------------------------------------------------------------------ */
@@ -9237,7 +9237,7 @@ end_of_job:
  * --------------------------------------------------------------------------
  * Notes:     o	Summary of syntax...
  *		  \picture(width,height){(x,y){pic_elem}~(x,y){pic_elem}~etc}
- *	      o	
+ *	      o
  * ======================================================================= */
 /* --- entry point --- */
 subraster *rastpicture ( char **expression, int size, subraster *basesp,
@@ -9340,7 +9340,7 @@ while ( *picptr != '\000' )		/* until we run out of pic_elems */
       default: break;			/* unrecognized flag */
       case 'c': iscenter=1; break;	/* center pic_elem at x,y coords */
       } /* --- end-of-switch --- */
-  /* --- interpret x,y;xinc,yinc;num following preamble --- */      
+  /* --- interpret x,y;xinc,yinc;num following preamble --- */
   if ( *putptr != '\000' )		/*check for put data after preamble*/
    {
    /* --- first squeeze preamble out of put expression --- */
@@ -10469,7 +10469,7 @@ if ( strlen(logfile) > 1 )		/* optional [logfile] given */
     fprintf(logfp,"(%s %d)","error status",status); /* emit error */
    for ( ilog=0; logvars[ilog] != NULL; ilog++ ) /* log till end-of-table */
     if ( ilog == commentvar		/* replace with comment... */
-    &&   commptr != NULL )		/* ...if available */  
+    &&   commptr != NULL )		/* ...if available */
      fprintf(logfp,"  %.256s",comment); /* log embedded comment */
     else
      { char *logval = getenv(logvars[ilog]); /*getenv(variable) to be logged*/
@@ -11983,7 +11983,7 @@ return ( aaval );			/* return antialiased val to caller*/
  *	     o	For black * center pixel, using grid#10 as an example,
  *		pixel stays ---      antialiased  ---*
  *		black if    -***     if part of	  -**
- *		part of a   -*-      a diagonal	  -*- 
+ *		part of a   -*-      a diagonal	  -*-
  *		corner, eg,  *       line, eg,	  *
  * ======================================================================= */
 /* --- entry point --- */
@@ -12176,13 +12176,13 @@ end_of_job:
  * --------------------------------------------------------------------------
  * Notes:    o	Handles the eight gridnum's
  *		(gridnum/2 shown to eliminate irrelevant low-order bit)
- *		  ---        ---         --*          -*-      
+ *		  ---        ---         --*          -*-
  *		  --* = 14   *-- = 19    --* = 42     --* = 73
- *		  **-        -**         -*-          --*     
+ *		  **-        -**         -*-          --*
  *
- *		  -*-        -**         *--          **-      
+ *		  -*-        -**         *--          **-
  *		  *-- = 84   *-- = 112   *-- = 146    --* = 200
- *		  *--        ---         -*-          ---     
+ *		  *--        ---         -*-          ---
  * ======================================================================= */
 /* --- entry point --- */
 int	aapattern20 (raster *rp, int irow, int icol,
@@ -12255,13 +12255,13 @@ end_of_job:
  * --------------------------------------------------------------------------
  * Notes:    o	Handles the eight gridnum's
  *		(gridnum/2 shown to eliminate irrelevant low-order bit)
- *		  ---        ---         --*          -**      
+ *		  ---        ---         --*          -**
  *		  --* = 15   *-- = 23    --* = 43     --* = 105
- *		  ***        ***         -**          --*     
+ *		  ***        ***         -**          --*
  *
- *		  **-        ***         *--          ***      
+ *		  **-        ***         *--          ***
  *		  *-- = 212  *-- = 240   *-- = 150    --* = 232
- *		  *--        ---         **-          ---     
+ *		  *--        ---         **-          ---
  * ======================================================================= */
 /* --- entry point --- */
 int	aapattern39 (raster *rp, int irow, int icol,
@@ -12870,7 +12870,7 @@ for ( irow=0; irow<height; irow++ )
   gridnum = aagridnum(rp,irow,icol);	/*grid# coding 3x3 grid at irow,icol*/
   bitval = (gridnum&1);			/* center bit set if gridnum odd */
   aabyteval = (intbyte)(bitval==bgbitval?0:grayscale-1); /* default aa val */
-  imap++;				/* first bump bitmap[] index */  
+  imap++;				/* first bump bitmap[] index */
   bytemap[imap] = (intbyte)(aabyteval);	/* init antialiased pixel */
   /* --- look up antialiased value for this grid --- */
   aabyteval = aalookup(gridnum);	/* look up on grid# */
