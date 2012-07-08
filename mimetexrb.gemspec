@@ -1,6 +1,6 @@
 spec = Gem::Specification.new do | s |
   s.name       = "mimetexrb"
-  s.version    = '1.0.1'
+  s.version    = '1.0.2'
   s.author     = "32leaves"
   s.email      = "info@32leaves.net"
   s.homepage   = "http://blog.32leaves.net"
