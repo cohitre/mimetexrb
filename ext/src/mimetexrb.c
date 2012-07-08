@@ -39,13 +39,25 @@ static VALUE MIMETEX_init(VALUE self, int fontSize) {
 	return self;
 }
 
-static VALUE MIMETEX_render(VALUE self, VALUE latex) {
-	Check_Type (latex, T_STRING);
+static VALUE MIMETEX_render(VALUE self, VALUE rb_sLatexCode) {
+	Check_Type (rb_sLatexCode, T_STRING);
+
+	VALUE rb_sLatexCodeCopy;
+
+	// Because plain duplication shares internal memory region.  You
+	// have to call rb_str_modify() before modifying a string.
+  rb_sLatexCodeCopy = rb_str_dup(rb_sLatexCode);
+  rb_str_modify(rb_sLatexCodeCopy);
 
 	int fontSize = FIX2INT(rb_iv_get(self, "@fontSize"));
+
 	if(fontSize > 4 || fontSize < 1) fontSize = 2;
-	subraster *sp = rasterize(StringValue(latex), fontSize);
+
+	subraster *sp = rasterize(StringValuePtr(rb_sLatexCodeCopy), fontSize);
 	bitmap_raster = sp->image;
+
+  type_raster(bitmap_raster,stdout);  /* display ascii image of raster */
+
 	char *gif_buffer = ALLOCA_N(char, MAXGIFSZ);
 
 	int gifSize = 0;
